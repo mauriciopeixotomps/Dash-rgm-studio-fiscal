@@ -173,7 +173,7 @@
   .multi-bars-row { display: flex; align-items: flex-end; gap: 14px; margin-bottom: 20px; }
   .multi-bars-title { width: 84px; flex-shrink: 0; font-size: 12px; color: var(--text-muted); font-weight: 600; padding-bottom: 10px; }
   .multi-bars-grid {
-    flex: 1; display: grid; grid-template-columns: repeat(7, 1fr) 1.3fr; align-items: end;
+    flex: 1; display: grid; grid-template-columns: repeat(7, 1fr); align-items: end;
     column-gap: 10px; height: 96px; border-bottom: 1px solid var(--border);
   }
   .mb-cell { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; min-width: 0; }
@@ -188,7 +188,7 @@
   }
   .multi-bars-labels { display: flex; gap: 14px; }
   .multi-bars-labels .mbl-spacer { width: 84px; flex-shrink: 0; }
-  .multi-bars-labels .mbl-grid { flex: 1; display: grid; grid-template-columns: repeat(7, 1fr) 1.3fr; column-gap: 10px; }
+  .multi-bars-labels .mbl-grid { flex: 1; display: grid; grid-template-columns: repeat(7, 1fr); column-gap: 10px; }
   .multi-bars-labels .mbl-grid span { text-align: center; font-size: 11.5px; color: var(--text-muted); }
   .multi-bars-labels .mbl-grid span.mbl-total { font-weight: 700; color: var(--text-dim); border-left: 1px solid var(--border); padding-left: 12px; }
 
@@ -202,7 +202,7 @@
   /* % caixa/venda bridge row */
   .mb-pct-row { display: flex; align-items: center; gap: 14px; margin: -8px 0 20px; }
   .mb-pct-title { width: 84px; flex-shrink: 0; font-size: 10.5px; color: var(--text-muted); line-height: 1.3; }
-  .mb-pct-grid { flex: 1; display: grid; grid-template-columns: repeat(7, 1fr) 1.3fr; column-gap: 10px; }
+  .mb-pct-grid { flex: 1; display: grid; grid-template-columns: repeat(7, 1fr); column-gap: 10px; }
   .mb-pct-cell { text-align: center; font-size: 11px; color: var(--text-dim); font-weight: 600; }
   .mb-pct-cell.current { color: var(--accent); }
   .mb-pct-cell.resumo { border-left: 1px solid var(--border); padding-left: 12px; }
@@ -273,16 +273,14 @@
   .pill.neutral { background: var(--card-hi); color: var(--text-muted); }
 
   /* ===== Funnel ===== */
-  .funnel { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(120px, 1fr); margin-top: 22px; overflow-x: auto; padding-bottom: 4px; }
+  .funnel { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(120px, 1fr); margin-top: 22px; overflow-x: auto; overflow-y: visible; padding-bottom: 4px; }
   .funnel-step { text-align: center; position: relative; padding: 0 6px; min-width: 0; }
+  .funnel-val { font-weight: 700; font-size: 15px; color: var(--text); height: 22px; margin-bottom: 6px; }
   .funnel-bar-wrap { height: 110px; display: flex; align-items: flex-end; justify-content: center; }
-  .funnel-bar {
-    width: 64px; border-radius: 6px 6px 0 0; background: var(--accent-dark);
-    display: flex; align-items: flex-start; justify-content: center; padding-top: 6px;
-  }
+  .funnel-bar { width: 64px; border-radius: 6px 6px 0 0; background: var(--accent-dark); }
   .funnel-step:nth-child(1) .funnel-bar { background: var(--text-muted); }
   .funnel-step:last-child .funnel-bar { background: var(--accent); }
-  .funnel-val { font-weight: 700; font-size: 15px; color: var(--accent-ink); }
+  .funnel-step:last-child .funnel-val { color: var(--accent); }
   .funnel-label { font-size: 11.5px; color: var(--text-dim); margin-top: 10px; }
   .funnel-conv { font-size: 11px; color: var(--text-muted); margin-top: 3px; font-weight: 600; }
 
@@ -732,14 +730,10 @@
     { m: 'Jul', contratos: 7, valor: 330500, caixa: 330500, kind: 'current',
       equipe: { contratos: 4, valor: 219000, caixa: 219000 } },
   ];
-  const PREV_MONTHS = MONTHS.filter(d => d.kind === 'prev');
-  const JUL = MONTHS.find(d => d.kind === 'current');
-  const mediaAntes = key => PREV_MONTHS.reduce((s, d) => s + d[key], 0) / PREV_MONTHS.length;
 
-  function renderMultiBars(containerId, values, valueFmt, resumo) {
+  function renderMultiBars(containerId, values, valueFmt) {
     const container = document.getElementById(containerId);
-    const allVals = values.map(d => d.v).concat(resumo ? [resumo.media, resumo.jul] : []);
-    const max = Math.max(...allVals, 1);
+    const max = Math.max(...values.map(d => d.v), 1);
     const TRACK_PX = 96; // matches .multi-bars-grid height — using px instead of % avoids nested-flex percentage-height bugs
     container.innerHTML = '';
     values.forEach(d => {
@@ -763,45 +757,19 @@
       }
       container.appendChild(cell);
     });
-    if (resumo) {
-      const cell = document.createElement('div');
-      cell.className = 'mb-cell resumo';
-      const hMedia = Math.max((resumo.media / max) * TRACK_PX, 4);
-      const hJul = Math.max((resumo.jul / max) * TRACK_PX, 4);
-      cell.innerHTML = `
-        <div class="mb-resumo-bars" style="display:flex; gap:6px; align-items:flex-end; justify-content:center; height:${TRACK_PX}px; width:100%;">
-          <div style="display:flex; flex-direction:column; align-items:center; justify-content:flex-end; height:100%;">
-            <div class="mb-val">${valueFmt(resumo.media)}</div>
-            <div class="mb-bar" style="height:${hMedia}px; max-width:22px;"></div>
-          </div>
-          <div style="display:flex; flex-direction:column; align-items:center; justify-content:flex-end; height:100%;">
-            <div class="mb-val" style="color:var(--accent); font-weight:700;">${valueFmt(resumo.jul)}</div>
-            <div class="mb-bar" style="height:${hJul}px; max-width:22px; background:var(--accent);"></div>
-          </div>
-        </div>
-      `;
-      container.appendChild(cell);
-    }
   }
 
-  renderMultiBars('chart-contratos', MONTHS.map(d => ({ v: d.contratos, m: d.m, kind: d.kind, equipeV: d.equipe && d.equipe.contratos })), v => String(Math.round(v * 10) / 10).replace('.', ','),
-    { media: mediaAntes('contratos'), jul: JUL.contratos });
-  renderMultiBars('chart-valor', MONTHS.map(d => ({ v: d.valor, m: d.m, kind: d.kind, equipeV: d.equipe && d.equipe.valor })), fmtBRLk,
-    { media: mediaAntes('valor'), jul: JUL.valor });
-  renderMultiBars('chart-caixa', MONTHS.map(d => ({ v: d.caixa || 0, m: d.m, kind: d.kind, equipeV: d.equipe && d.equipe.caixa })), fmtBRLk,
-    { media: mediaAntes('caixa'), jul: JUL.caixa });
+  renderMultiBars('chart-contratos', MONTHS.map(d => ({ v: d.contratos, m: d.m, kind: d.kind, equipeV: d.equipe && d.equipe.contratos })), v => String(Math.round(v * 10) / 10).replace('.', ','));
+  renderMultiBars('chart-valor', MONTHS.map(d => ({ v: d.valor, m: d.m, kind: d.kind, equipeV: d.equipe && d.equipe.valor })), fmtBRLk);
+  renderMultiBars('chart-caixa', MONTHS.map(d => ({ v: d.caixa || 0, m: d.m, kind: d.kind, equipeV: d.equipe && d.equipe.caixa })), fmtBRLk);
 
-  // shared month-label row (last column = média antes / julho)
+  // shared month-label row
   const monthsLabelsEl = document.getElementById('chart-months-labels');
   MONTHS.forEach(d => {
     const span = document.createElement('span');
     span.textContent = d.m;
     monthsLabelsEl.appendChild(span);
   });
-  const totalSpan = document.createElement('span');
-  totalSpan.className = 'mbl-total';
-  totalSpan.innerHTML = '<span style="color:var(--text-muted)">média antes</span> · <span style="color:var(--accent)">julho</span>';
-  monthsLabelsEl.appendChild(totalSpan);
 
   // % caixa / venda bridge row
   const pctEl = document.getElementById('chart-pct-caixa');
@@ -812,12 +780,6 @@
     cell.textContent = `${pct}%`;
     pctEl.appendChild(cell);
   });
-  const pctResumoCell = document.createElement('div');
-  pctResumoCell.className = 'mb-pct-cell resumo';
-  const pctMedia = Math.round((mediaAntes('caixa') / mediaAntes('valor')) * 100);
-  const pctJul = Math.round((JUL.caixa / JUL.valor) * 100);
-  pctResumoCell.innerHTML = `${pctMedia}% · <span style="color:var(--accent)">${pctJul}%</span>`;
-  pctEl.appendChild(pctResumoCell);
 
   // ---------- funnel julho ----------
   const FUNNEL = [
@@ -836,8 +798,9 @@
     step.className = 'funnel-step';
     const h = Math.max((f.val / funnelMax) * 100, 6);
     step.innerHTML = `
+      <div class="funnel-val">${f.val}</div>
       <div class="funnel-bar-wrap">
-        <div class="funnel-bar" style="height:${h}%"><span class="funnel-val">${f.val}</span></div>
+        <div class="funnel-bar" style="height:${h}%"></div>
       </div>
       <div class="funnel-label">${f.label}</div>
       ${f.conv ? `<div class="funnel-conv">${f.conv} de conversão</div>` : '<div class="funnel-conv">&nbsp;</div>'}
