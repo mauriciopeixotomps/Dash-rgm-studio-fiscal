@@ -12,18 +12,7 @@
     --rule:#DEDBD3;
     --font: Calibri, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
   }
-  :root[data-theme="dark"]{
-    --bg:#171613; --frame:#211F1B; --rule:#3A362E;
-    --text:#EFEDE7; --text-muted:#867F72; --text-muted2:#B8B2A5;
-    --meta-bg:#2E2B25; --table-row:#232A45; --blue-track:#2A2A2A;
-  }
-  @media (prefers-color-scheme: dark){
-    :root:not([data-theme="light"]){
-      --bg:#171613; --frame:#211F1B; --rule:#3A362E;
-      --text:#EFEDE7; --text-muted:#867F72; --text-muted2:#B8B2A5;
-      --meta-bg:#2E2B25; --table-row:#232A45; --blue-track:#2A2A2A;
-    }
-  }
+  /* Fundo sempre claro — deck corporativo, sem alternância automática por tema do sistema. */
   *{box-sizing:border-box;}
   body{margin:0; font-family:var(--font); background:var(--bg); color:var(--text); -webkit-font-smoothing:antialiased;}
   .stage{min-height:100vh; display:flex; align-items:center; justify-content:center; padding:28px 16px;}
