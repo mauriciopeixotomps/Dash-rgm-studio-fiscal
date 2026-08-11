@@ -107,6 +107,28 @@
   }
   .chart-card h3 { margin: 0 0 4px; font-size: 15px; font-weight: 600; }
   .chart-card .chart-sub { font-size: 12.5px; color: var(--text-muted); margin: 0 0 22px; }
+
+  .kpi-primary-card { margin: 18px 0 24px; }
+  .kpi-primary-card h3 { margin: 0 0 12px; font-size: 15px; font-weight: 600; }
+  .kpi-box { background: var(--card-hi); border: 1px solid var(--accent); border-radius: 10px; padding: 18px 8px; display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-bottom: 16px; }
+  .kpi-box .kpi-item { text-align: center; padding: 0 6px; }
+  .kpi-box .kpi-item .kl { font-size: 11.5px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+  .kpi-box .kpi-item .kv { font-size: 21px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .kpi-box .kpi-item .kv.red { color: var(--red); }
+  .kpi-box .kpi-item .kv.green { color: var(--green); }
+  .kpi-box .kpi-item .kmeta { margin-top: 6px; background: var(--card); border: 1px solid var(--border); border-radius: 5px; padding: 4px 6px; font-size: 11px; color: var(--text-dim); }
+  .kpi-row { display: grid; gap: 8px; margin-bottom: 14px; }
+  .kpi-row.mid { grid-template-columns: repeat(5, 1fr); }
+  .kpi-row.bot { grid-template-columns: repeat(4, 1fr); }
+  .kpi-row .kpi-item { text-align: center; }
+  .kpi-row .kpi-item .kl { font-size: 11.5px; color: var(--text-dim); margin-bottom: 5px; }
+  .kpi-row .kpi-item .kv { font-size: 16.5px; font-weight: 700; color: var(--red); font-variant-numeric: tabular-nums; }
+  .kpi-footnote { font-size: 11px; font-style: italic; color: var(--text-muted); margin-top: 4px; line-height: 1.5; }
+  @media (max-width: 720px) {
+    .kpi-box { grid-template-columns: repeat(3, 1fr); row-gap: 16px; }
+    .kpi-row.mid { grid-template-columns: repeat(3, 1fr); row-gap: 12px; }
+    .kpi-row.bot { grid-template-columns: repeat(2, 1fr); row-gap: 12px; }
+  }
   .bars {
     display: flex; align-items: flex-end; gap: 10px;
   }
@@ -601,9 +623,55 @@
       </div>
     </div>
 
+    <div class="kpi-primary-card">
+      <h3>KPIs primários — julho</h3>
+      <div class="kpi-box">
+        <div class="kpi-item">
+          <div class="kl">Leads</div>
+          <div class="kv red">1.318</div>
+          <div class="kmeta">Meta: 1.500</div>
+        </div>
+        <div class="kpi-item">
+          <div class="kl">Agendamentos</div>
+          <div class="kv red">119</div>
+        </div>
+        <div class="kpi-item">
+          <div class="kl">Reuniões Realizadas</div>
+          <div class="kv red">106</div>
+        </div>
+        <div class="kpi-item">
+          <div class="kl">Contratos Franquia</div>
+          <div class="kv red">7</div>
+          <div class="kmeta">Meta: 15</div>
+        </div>
+        <div class="kpi-item">
+          <div class="kl">Venda Total</div>
+          <div class="kv red">R$ 330.500</div>
+        </div>
+        <div class="kpi-item">
+          <div class="kl">Ticket Médio</div>
+          <div class="kv green">R$ 47.214</div>
+        </div>
+      </div>
+      <div class="kpi-row mid">
+        <div class="kpi-item"><div class="kl">Custo por Lead</div><div class="kv">R$ 67,20</div></div>
+        <div class="kpi-item"><div class="kl">FPQ's Recebidas</div><div class="kv">51</div></div>
+        <div class="kpi-item"><div class="kl">CC2 Realizada</div><div class="kv">33</div></div>
+        <div class="kpi-item"><div class="kl">Caixa de Entrada</div><div class="kv">R$ 330.500</div></div>
+        <div class="kpi-item"><div class="kl">Investimento</div><div class="kv">R$ 88.575,16</div></div>
+      </div>
+      <div class="kpi-row bot">
+        <div class="kpi-item"><div class="kl">Custo por MQL</div><div class="kv">R$ 447,35</div></div>
+        <div class="kpi-item"><div class="kl">Custo por FPQ</div><div class="kv">R$ 1.736,77</div></div>
+        <div class="kpi-item"><div class="kl">Custo de CC1</div><div class="kv">R$ 835,61</div></div>
+        <div class="kpi-item"><div class="kl">Custo de Aquisição Franquia</div><div class="kv">R$ 12.653,59</div></div>
+      </div>
+      <p class="kpi-footnote">Leads / Agendamentos / Reuniões Realizadas / Investimento: relatório de Tráfego &amp; Qualificação (Mkt), Fiscal total do mês. FPQ / CC2 e custos derivados: Pipedrive, escopo equipe Mauricio. Contratos / Venda / Ticket Médio: total Fiscal do mês (equipe + outros 3 closers).</p>
+    </div>
+
     <div class="chart-card">
       <h3>Funil de julho — equipe Mauricio</h3>
-      <p class="chart-sub">1.318 leads Fiscal captados pelo Mkt no mês → 122 atribuídos aos 4 closers da equipe Mauricio (não inclui Suzanny, Thuany e Emerson)</p>
+      <p class="chart-sub">Conversão da equipe Mauricio no Pipedrive, a partir dos leads e agendamentos do Mkt acima (não inclui Suzanny, Thuany e Emerson)</p>
       <div class="funnel" id="funnel-julho"></div>
       <p class="chart-sub" style="margin: 10px 0 0;">Percentual sob cada etapa = taxa de conversão vindo da etapa anterior (ex.: 42,5% dos que fizeram CC1 chegaram a FPQ). CC1 realizada inclui reuniões agendadas via outbound e via funil de perdidos pelos próprios closers, além das vindas do tráfego pago do Mkt — por isso o número aqui é maior que o do relatório de Tráfego &amp; Qualificação.</p>
     </div>
@@ -746,7 +814,7 @@
 
   // ---------- funnel julho ----------
   const FUNNEL = [
-    { label: 'Leads', val: 122 },
+    { label: 'Leads (equipe)', val: 122 },
     { label: 'CC1 realizada', val: 120, conv: '' },
     { label: 'FPQ recebida', val: 51, conv: '42,5%' },
     { label: 'CC2 realizada', val: 33, conv: '64,7%' },
