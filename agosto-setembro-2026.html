@@ -523,10 +523,7 @@
 
     <div class="kpi-primary-card" style="margin-top:26px">
       <h3>KPIs primários — Agosto, Setembro e acumulado</h3>
-      <div class="table-wrap"><table class="closer-table vs-table">
-        <thead><tr><th>Indicador</th><th class="num">Agosto</th><th class="num">Setembro</th><th class="num">Acumulado Ago + Set</th></tr></thead>
-        <tbody id="kpi-body"></tbody>
-      </table></div>
+      <div id="kpi-blocks"></div>
       <p class="kpi-footnote" id="kpi-foot"></p>
     </div>
 
@@ -610,7 +607,7 @@
   <section id="dificuldades">
     <div class="section-title-row"><span class="step-eyebrow">7</span><h2 class="section-title">Dificuldades</h2></div>
     <p class="section-note draft-note">Rascunho a partir dos números — revise, corte ou reescreva.</p>
-    <div class="draft-list"><div class="draft-item"><span class="dn">1</span><div><b>No-show alto nas reuniões.</b> 60,3% em agosto (174 agendadas, 89 realizadas) e 64,0% em setembro (89 agendadas, 65 realizadas) no relatório de Tráfego.</div></div><div class="draft-item"><span class="dn">1b</span><div><b>Qualificação caiu com mais leads.</b> Qualificados de 177 (ago) para 61 (set), com leads subindo de 1.130 para 1.391: taxa de qualificação de 15,7% para 4,4%. O CPL melhorou (R$ 68,60 → R$ 65,05), mas o investimento subiu de R$ 77,5 mil para R$ 90,5 mil e o custo por qualificado foi de R$ 438 para R$ 1.483.</div></div><div class="draft-item"><span class="dn">2</span><div><b>Caixa caiu em setembro.</b> Após dois meses 100% à vista, setembro entrou 71% em caixa (R$ 196.750 de R$ 276.500): a Corporate de São Paulo (R$ 94.750) entrou com R$ 15 mil e saldo em 4x.</div></div><div class="draft-item"><span class="dn">3</span><div><b>Receita concentrada em poucos contratos.</b> Em setembro, 2 contratos (GS Partner de Brasília e a Corporate de São Paulo) respondem por 75% da venda; em agosto, 1 GS Partner respondeu por 46%.</div></div><div class="draft-item"><span class="dn">4</span><div><b>Ciclo de venda alongou.</b> Leadtime médio da equipe: 11,8 dias (jul) → 23,0 (ago) → 26,5 (set). Segue abaixo dos 30 dias do período anterior, mas a tendência é de alta; a Corporate de São Paulo levou 65 dias.</div></div><div class="draft-item"><span class="dn">5</span><div><b>Agendamento dos SDRs caiu com mais leads.</b> De 11/08 a 31/08 foram 116 agendamentos sobre 526 leads (22%); em setembro, 94 sobre 1.409 (6,7%, meta 30%), e 52,1% das agendadas viraram reunião realizada (meta 65%).</div></div><div class="draft-item"><span class="dn">6</span><div><b>Outbound quase inexistente.</b> Foram 11 CC1 de outbound em dois meses (1 em agosto, 10 em setembro — todos do Adalberto), com 2 FPQ, 2 CC2 e nenhum contrato de franquia (1 Partner). A produtividade da equipe hoje depende do inbound (82% do CC1).</div></div><div class="draft-item"><span class="dn">7</span><div><b>Contratos Partner não geram venda de franquia.</b> Sete em setembro (5 do Adalberto e 2 da Luciana) consomem agenda dos closers sem entrar em venda/caixa/TKM — precisam de indicador e meta próprios.</div></div></div>
+    <div class="draft-list"><div class="draft-item"><span class="dn">1</span><div><b>No-show alto nas reuniões.</b> 60,3% em agosto (174 agendadas, 89 realizadas) e 64,0% em setembro (89 agendadas, 65 realizadas) no relatório de Tráfego.</div></div><div class="draft-item"><span class="dn">2</span><div><b>Caixa caiu em setembro.</b> Após dois meses 100% à vista, setembro entrou 71% em caixa (R$ 196.750 de R$ 276.500): a Corporate de São Paulo (R$ 94.750) entrou com R$ 15 mil e saldo em 4x.</div></div><div class="draft-item"><span class="dn">3</span><div><b>Receita concentrada em poucos contratos.</b> Em setembro, 2 contratos (GS Partner de Brasília e a Corporate de São Paulo) respondem por 75% da venda; em agosto, 1 GS Partner respondeu por 46%.</div></div><div class="draft-item"><span class="dn">4</span><div><b>Ciclo de venda alongou.</b> Leadtime médio da equipe: 11,8 dias (jul) → 23,0 (ago) → 26,5 (set). Segue abaixo dos 30 dias do período anterior, mas a tendência é de alta; a Corporate de São Paulo levou 65 dias.</div></div><div class="draft-item"><span class="dn">5</span><div><b>Agendamento dos SDRs caiu com mais leads.</b> De 11/08 a 31/08 foram 116 agendamentos sobre 526 leads (22%); em setembro, 94 sobre 1.409 (6,7%, meta 30%), e 52,1% das agendadas viraram reunião realizada (meta 65%).</div></div><div class="draft-item"><span class="dn">6</span><div><b>Outbound quase inexistente.</b> Foram 11 CC1 de outbound em dois meses (1 em agosto, 10 em setembro — todos do Adalberto), com 2 FPQ, 2 CC2 e nenhum contrato de franquia (1 Partner). A produtividade da equipe hoje depende do inbound (82% do CC1).</div></div><div class="draft-item"><span class="dn">7</span><div><b>Contratos Partner não geram venda de franquia.</b> Sete em setembro (5 do Adalberto e 2 da Luciana) consomem agenda dos closers sem entrar em venda/caixa/TKM — precisam de indicador e meta próprios.</div></div></div>
   </section>
 
   <section id="jornada">
@@ -900,36 +897,37 @@ function renderResumo(V) {
 }
 
 function renderKpiTable() {
-  const A = DATA.views.ago, S = DATA.views.set, T = DATA.views.all;
-  const mk = (V, k, fn) => (V.mkt && V.mkt[k] !== undefined && V.mkt[k] !== null) ? fn(V.mkt[k], V) : '—';
-  const inv = (V, fn) => (V.mkt && V.mkt.invest) ? fn(V) : '—';
-  const rows = [
-    ['sec', 'Topo de funil (relatório de Tráfego e Qualificação)'],
-    ['Leads', V => mk(V, 'leads', x => x.toLocaleString('pt-BR'))],
-    ['Agendamentos', V => mk(V, 'agend', x => x)],
-    ['CC1 realizada (inbound)', V => mk(V, 'cc1', x => x)],
-    ['No-show', V => mk(V, 'noshow_pct', x => dec(x) + '%')],
-    ['MQL (leads qualificados)', V => mk(V, 'mql', x => x)],
-    ['Taxa de qualificação (MQL / leads)', V => (V.mkt && V.mkt.mql && V.mkt.leads) ? dec(100 * V.mkt.mql / V.mkt.leads) + '%' : '—'],
-    ['Investimento em mídia', V => mk(V, 'invest', brlc)],
-    ['Custo por lead', V => mk(V, 'cpl', brlc)],
-    ['Custo por MQL', V => inv(V, W => brlc(W.mkt.invest / W.mkt.mql))],
-    ['Custo por CC1', V => inv(V, W => brlc(W.mkt.invest / W.mkt.cc1))],
-    ['CAC da franquia', V => inv(V, W => W.contratos ? brlc(W.mkt.invest / W.contratos) : '—')],
-    ['sec', 'Equipe Maurício (Pipedrive e planilha de vendas)'],
-    ['FPQ recebidas (todas as origens)', V => V.funil.fpq],
-    ['CC2 realizada', V => V.funil.cc2],
-    ['CC3 realizada', V => V.funil.cc3],
-    ['Contratos de franquia', V => V.contratos, 1],
-    ['Contratos Partner (parceria)', V => V.partner_n, 1],
-    ['Venda', V => brl(V.valor)],
-    ['Caixa (entrada)', V => brl(V.caixa)],
-    ['Ticket médio', V => brl(V.tkm)]
-  ];
-  $('kpi-body').innerHTML = rows.map(r => r[0] === 'sec'
-    ? `<tr><td colspan="4" style="font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);font-weight:700;background:var(--card-hi)">${r[1]}</td></tr>`
-    : `<tr${r[2] ? ' class="hl-row"' : ''}><td>${r[0]}</td><td class="num">${r[1](A)}</td><td class="num">${r[1](S)}</td><td class="num"><b>${r[1](T)}</b></td></tr>`).join('');
-  $('kpi-foot').innerHTML = 'Agosto e setembro: relatório de Tráfego &amp; Qualificação (Fiscal Franquia) — leads, agendamentos, CC1 (funil inbound), qualificados (MQL), no-show e investimento. O acumulado soma os dois meses; o no-show é a média ponderada pelos agendamentos e o CPL é investimento ÷ leads. CAC = investimento ÷ contratos de franquia da equipe Maurício. FPQ / CC2 / CC3 incluem todas as origens da equipe.';
+  const block = (titulo, V) => {
+    const m = V.mkt || {}, has = k => m[k] !== undefined && m[k] !== null;
+    const f = (k, fn) => has(k) ? fn(m[k]) : '—';
+    const cost = (num, den) => (has(num) && den) ? brlc(m[num] / den) : '—';
+    const metaL = 1500 * V.months, metaC = 15 * V.months;
+    return `<h4 style="margin:22px 0 10px;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent)">${titulo}</h4>
+    <div class="kpi-box">
+      <div class="kpi-item"><div class="kl">Leads</div><div class="kv red">${f('leads', x => x.toLocaleString('pt-BR'))}</div><div class="kmeta">Meta: ${metaL.toLocaleString('pt-BR')}</div></div>
+      <div class="kpi-item"><div class="kl">Agendamentos</div><div class="kv">${f('agend', x => x)}</div></div>
+      <div class="kpi-item"><div class="kl">CC1 realizada (inbound)</div><div class="kv">${f('cc1', x => x)}</div>${has('noshow_pct') ? `<div class="kmeta">no-show ${dec(m.noshow_pct)}%</div>` : ''}</div>
+      <div class="kpi-item"><div class="kl">Contratos de franquia</div><div class="kv red">${V.contratos}</div><div class="kmeta">Meta: ${metaC}</div></div>
+      <div class="kpi-item"><div class="kl">Venda — equipe</div><div class="kv">${brl(V.valor)}</div></div>
+      <div class="kpi-item"><div class="kl">Ticket médio</div><div class="kv green">${brl(V.tkm)}</div></div>
+    </div>
+    <div class="kpi-row secondary">
+      <div class="kpi-item"><div class="kl">Investimento (mídia)</div><div class="kv">${f('invest', brlc)}</div></div>
+      <div class="kpi-item"><div class="kl">Custo por Lead</div><div class="kv">${f('cpl', brlc)}</div></div>
+      <div class="kpi-item"><div class="kl">Custo por MQL</div><div class="kv">${cost('invest', m.mql)}</div></div>
+      <div class="kpi-item"><div class="kl">Custo por CC1</div><div class="kv">${cost('invest', m.cc1)}</div></div>
+      <div class="kpi-item"><div class="kl">CAC Franquia</div><div class="kv">${cost('invest', V.contratos)}</div></div>
+      <div class="kpi-item"><div class="kl">MQL</div><div class="kv">${f('mql', x => x)}</div></div>
+      <div class="kpi-item"><div class="kl">FPQ recebidas (equipe)</div><div class="kv">${V.funil.fpq}</div></div>
+      <div class="kpi-item"><div class="kl">CC2 realizada (equipe)</div><div class="kv">${V.funil.cc2}</div></div>
+      <div class="kpi-item"><div class="kl">CC3 realizada (equipe)</div><div class="kv">${V.funil.cc3}</div></div>
+      <div class="kpi-item"><div class="kl">Caixa de entrada</div><div class="kv">${brl(V.caixa)}</div></div>
+      <div class="kpi-item"><div class="kl">Contratos Partner</div><div class="kv">${V.partner_n}</div></div>
+    </div>`;
+  };
+  const D_ = DATA.views;
+  $('kpi-blocks').innerHTML = block('Agosto', D_.ago) + block('Setembro', D_.set) + block('Acumulado Agosto + Setembro', D_.all);
+  $('kpi-foot').innerHTML = 'Leads, agendamentos, CC1 (funil inbound), investimento e custos de mídia: relatório de Tráfego &amp; Qualificação (Fiscal Franquia), apresentado pelo Mkt. No acumulado, o CPL é investimento ÷ leads e o CAC é investimento ÷ contratos de franquia da equipe Maurício. FPQ / CC2 / CC3: Pipedrive, equipe Maurício, todas as origens. Contratos / venda / ticket / caixa: Relatório Vendas Expansão.';
 }
 
 function drawFunnel(elId, f, contratos, label) {
