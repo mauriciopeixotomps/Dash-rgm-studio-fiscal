@@ -838,13 +838,13 @@ function renderMediasCard() {
     <div class="compare-grid">
       <div class="compare-col">
         <div class="cohort-label">Janeiro – Junho</div><div class="cohort-range">6 meses · ${jjC} closers · operação Fiscal inteira</div>
-        ${m('Contratos de franquia', jj.contratos)}${m('Contratos Partner (parceria)', jj.partner)}${m('Valor de venda total', brl(jj.valor))}${m('Ticket médio', brl(jj.tkm))}
+        ${m('Contratos de franquia', jj.contratos)}${m('Contratos Partner (parceria)', jj.partner)}${m('Valor de venda total', brl(jj.valor))}${m('Valor de caixa (entrada)', brl(jj.caixa))}${m('Ticket médio', brl(jj.tkm))}
         ${m('Contratos de franquia / mês', dec(cpm[0]))}${m('Contratos / closer / mês', dec(cpc[0], 2))}${m('% caixa / venda', pc(jj.pct))}${m('Lead time médio', dec(jj.leadtime, 0) + ' dias')}
       </div>
       <div class="compare-vs">VS</div>
       <div class="compare-col current">
         <div class="cohort-label">Julho a Setembro</div><div class="cohort-range">3 meses · equipe Maurício (4 closers)</div>
-        ${m('Contratos de franquia', q.contratos)}${m('Contratos Partner (parceria)', q.partner)}${m('Valor de venda total', brl(q.valor))}${m('Ticket médio', brl(q.tkm), dpct(q.tkm, jj.tkm))}
+        ${m('Contratos de franquia', q.contratos)}${m('Contratos Partner (parceria)', q.partner)}${m('Valor de venda total', brl(q.valor))}${m('Valor de caixa (entrada)', brl(q.caixa))}${m('Ticket médio', brl(q.tkm), dpct(q.tkm, jj.tkm))}
         ${m('Contratos de franquia / mês', dec(cpm[1]), dpct(cpm[1], cpm[0]))}${m('Contratos / closer / mês', dec(cpc[1], 2), dpct(cpc[1], cpc[0]))}${m('% caixa / venda', pc(q.pct), dpp(q.pct, jj.pct))}${m('Lead time médio', dec(q.leadtime, 0) + ' dias', dpct(q.leadtime, jj.leadtime, true))}
       </div>
     </div>
@@ -857,6 +857,7 @@ function renderMediasStatic() {
     ['Contratos de franquia', k => k === 'jj' ? `${B.jj.team.contratos} <span class="delta neutral">operação inteira</span>` : B[k].team.contratos, 1],
     ['Contratos Partner (parceria)', k => B[k].team.partner, 1],
     ['Valor de venda', k => brl(B[k].team.valor)],
+    ['Valor de caixa (entrada)', k => brl(B[k].team.caixa)],
     ['Ticket médio', k => brl(B[k].team.tkm)],
     ['Franquias por mês', k => dec(B[k].team.contratos / mths[k])],
     ['Franquias por closer / mês', k => dec(B[k].team.contratos / (k === 'jj' ? jjC : 4) / mths[k], 2)],
