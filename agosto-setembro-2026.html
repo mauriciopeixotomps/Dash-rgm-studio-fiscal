@@ -492,7 +492,7 @@
 
   <section id="medias">
     <div class="section-title-row"><span class="step-eyebrow">2</span><h2 class="section-title">Médias — últimos 3 meses</h2></div>
-    <p class="section-note">Total de franquias Studio Fiscal vendidas: Jan–Jun (operação inteira, 16 closers) contra julho, agosto, setembro e o total dos últimos 3 meses. A partir de julho, cada número é aberto em equipe Maurício e equipe Gabriel (closers do Agro que venderam Fiscal). Franquia e Partner em destaque.</p>
+    <p class="section-note">Jan–Jun (operação Fiscal inteira, 16 closers, antes da divisão dos times) contra julho, agosto, setembro e o total dos últimos 3 meses da equipe Maurício. Franquia e Partner em destaque.</p>
     <div id="medias-card"></div>
     <div class="table-wrap" style="margin-top:22px"><table class="closer-table vs-table">
       <thead><tr><th>Indicador</th><th class="num">Jan–Jun · 6 meses</th><th class="num">Julho</th><th class="num">Agosto</th><th class="num">Setembro</th><th class="num">Últimos 3 meses</th></tr></thead>
@@ -857,54 +857,41 @@ function renderVs() {
 }
 
 function renderMediasCard() {
-  const jj = DATA.byMonth.jj.team, Q = bandeira('3m'), qt = Q.t, jjC = DATA.medias_jj.closers;
-  const cpm = [jj.contratos / 6, Q.n / 3], cpcT = [jj.contratos / jjC / 6, qt.contratos / 4 / 3];
-  const m = (lab, val, delta, sub) => `<div class="compare-metric"><span class="m-label">${lab}${sub ? `<br><small style="color:var(--text-muted)">${sub}</small>` : ''}</span><span class="m-value">${val}${delta ? ' ' + delta : ''}</span></div>`;
-  const prod = (cpcT[1] / cpcT[0] - 1) * 100;
+  const jj = DATA.byMonth.jj.team, q = DATA.byMonth['3m'].team, jjC = DATA.medias_jj.closers;
+  const cpm = [jj.contratos / 6, q.contratos / 3], cpc = [jj.contratos / jjC / 6, q.contratos / 4 / 3];
+  const m = (lab, val, delta) => `<div class="compare-metric"><span class="m-label">${lab}</span><span class="m-value">${val}${delta ? ' ' + delta : ''}</span></div>`;
+  const prod = (cpc[1] / cpc[0] - 1) * 100;
   $('medias-card').innerHTML = `
     <div class="highlight"><div class="num">${prod >= 0 ? '+' : '−'}${Math.abs(Math.round(prod))}%</div>
-      <div class="txt"><b>Produtividade por closer da equipe Maurício</b>: de ${dec(cpcT[0], 2)} para ${dec(cpcT[1], 2)} contrato de franquia por closer/mês, com a equipe reduzida de ${jjC} para 4 pessoas — sustentada nos 3 meses da nova gestão.</div></div>
+      <div class="txt"><b>Produtividade por closer</b> de ${dec(cpc[0], 2)} para ${dec(cpc[1], 2)} contrato de franquia por closer/mês, com a equipe reduzida de ${jjC} para 4 pessoas — sustentada nos 3 meses da nova gestão.</div></div>
     <div class="compare-grid">
       <div class="compare-col">
-        <div class="cohort-label">Janeiro – Junho</div><div class="cohort-range">6 meses · ${jjC} closers · bandeira Fiscal inteira</div>
+        <div class="cohort-label">Janeiro – Junho</div><div class="cohort-range">6 meses · ${jjC} closers · operação Fiscal inteira</div>
         ${m('Contratos de franquia', jj.contratos)}${m('Contratos Partner (parceria)', jj.partner)}${m('Valor de venda total', brl(jj.valor))}${m('Ticket médio', brl(jj.tkm))}
-        ${m('Contratos de franquia / mês', dec(cpm[0]))}${m('% caixa / venda', pc(jj.pct))}${m('Lead time médio', dec(jj.leadtime, 0) + ' dias')}
+        ${m('Contratos de franquia / mês', dec(cpm[0]))}${m('Contratos / closer / mês', dec(cpc[0], 2))}${m('% caixa / venda', pc(jj.pct))}${m('Lead time médio', dec(jj.leadtime, 0) + ' dias')}
       </div>
       <div class="compare-vs">VS</div>
       <div class="compare-col current">
-        <div class="cohort-label">Julho a Setembro</div><div class="cohort-range">3 meses · bandeira Fiscal inteira (equipe Maurício + equipe Gabriel)</div>
-        ${m('Contratos de franquia', Q.n, '', `Maurício ${qt.contratos} · Gabriel ${Q.g.contratos}`)}
-        ${m('Contratos Partner (parceria)', Q.partner, '', `Maurício ${qt.partner} · Gabriel ${Q.g.partner}`)}
-        ${m('Valor de venda total', brl(Q.valor), '', `Maurício ${brl(qt.valor)} · Gabriel ${brl(Q.g.valor)}`)}
-        ${m('Ticket médio', brl(Q.tkm), dpct(Q.tkm, jj.tkm))}
-        ${m('Contratos de franquia / mês', dec(cpm[1]), dpct(cpm[1], cpm[0]), `Maurício ${dec(qt.contratos / 3)} · Gabriel ${dec(Q.g.contratos / 3)}`)}
-        ${m('% caixa / venda', pc(Q.pct), dpp(Q.pct, jj.pct))}
-        ${m('Lead time médio', dec(Q.lead, 0) + ' dias', dpct(Q.lead, jj.leadtime, true), `Maurício ${dec(qt.leadtime, 0)} · Gabriel ${dec(Q.g.leadtime, 0)} dias`)}
+        <div class="cohort-label">Julho a Setembro</div><div class="cohort-range">3 meses · equipe Maurício (4 closers)</div>
+        ${m('Contratos de franquia', q.contratos)}${m('Contratos Partner (parceria)', q.partner)}${m('Valor de venda total', brl(q.valor))}${m('Ticket médio', brl(q.tkm), dpct(q.tkm, jj.tkm))}
+        ${m('Contratos de franquia / mês', dec(cpm[1]), dpct(cpm[1], cpm[0]))}${m('Contratos / closer / mês', dec(cpc[1], 2), dpct(cpc[1], cpc[0]))}${m('% caixa / venda', pc(q.pct), dpp(q.pct, jj.pct))}${m('Lead time médio', dec(q.leadtime, 0) + ' dias', dpct(q.leadtime, jj.leadtime, true))}
       </div>
     </div>
-    <p class="section-note" style="margin-top:10px">Jan–Jun e Jul–Set são a mesma base: todas as franquias Studio Fiscal vendidas. A partir de julho, diferencia-se o que veio da equipe Maurício (4 closers) e da equipe Gabriel (closers do Agro que venderam Fiscal). Produtividade por closer considera só a equipe Maurício.</p>`;
+    <p class="section-note" style="margin-top:10px">Julho a setembro: só a equipe Maurício. Janeiro a junho é a operação Fiscal inteira, antes da divisão dos times. O que a equipe do Gabriel vendeu de Fiscal está na tabela de resultado por mês.</p>`;
 }
 
 function renderMediasStatic() {
-  const ks = ['jj', '7', '8', '9', '3m'], mths = { jj: 6, '7': 1, '8': 1, '9': 1, '3m': 3 }, X = {}; ks.forEach(k => { X[k] = bandeira(k); });
-  const jjC = DATA.medias_jj.closers, sub = '<span style="color:var(--text-muted)">&nbsp;&nbsp;↳ ';
-  const dash = k => k === 'jj';
+  const B = DATA.byMonth, jjC = DATA.medias_jj.closers, ks = ['jj', '7', '8', '9', '3m'], mths = { jj: 6, '7': 1, '8': 1, '9': 1, '3m': 3 };
   const rows = [
-    ['Contratos de franquia — total bandeira Fiscal', k => X[k].n, 1],
-    [sub + 'equipe Maurício</span>', k => dash(k) ? '—' : X[k].t.contratos],
-    [sub + 'equipe Gabriel (Agro)</span>', k => dash(k) ? '—' : X[k].g.contratos],
-    ['Contratos Partner (parceria) — total bandeira Fiscal', k => X[k].partner, 1],
-    [sub + 'equipe Maurício</span>', k => dash(k) ? '—' : X[k].t.partner],
-    [sub + 'equipe Gabriel (Agro)</span>', k => dash(k) ? '—' : X[k].g.partner],
-    ['Valor de venda — total bandeira Fiscal', k => brl(X[k].valor)],
-    [sub + 'equipe Maurício</span>', k => dash(k) ? '—' : brl(X[k].t.valor)],
-    [sub + 'equipe Gabriel (Agro)</span>', k => dash(k) ? '—' : (X[k].g.valor ? brl(X[k].g.valor) : '—')],
-    ['Ticket médio — total', k => brl(X[k].tkm)],
-    ['Franquias por mês — total', k => dec(X[k].n / mths[k])],
-    ['Franquias por closer / mês — equipe Maurício', k => dec(X[k].t.contratos / (k === 'jj' ? jjC : 4) / mths[k], 2)],
-    ['% caixa / venda — total', k => pc(X[k].pct)],
-    ['Lead time da franquia — total (dias)', k => X[k].lead ? dec(X[k].lead) : '—'],
-    ['Lead time do Partner — total (dias)', k => X[k].leadP ? dec(X[k].leadP) : '—']
+    ['Contratos de franquia', k => k === 'jj' ? `${B.jj.team.contratos} <span class="delta neutral">operação inteira</span>` : B[k].team.contratos, 1],
+    ['Contratos Partner (parceria)', k => B[k].team.partner, 1],
+    ['Valor de venda', k => brl(B[k].team.valor)],
+    ['Ticket médio', k => brl(B[k].team.tkm)],
+    ['Franquias por mês', k => dec(B[k].team.contratos / mths[k])],
+    ['Franquias por closer / mês', k => dec(B[k].team.contratos / (k === 'jj' ? jjC : 4) / mths[k], 2)],
+    ['% caixa / venda', k => pc(B[k].team.pct)],
+    ['Lead time da franquia (dias)', k => B[k].team.leadtime ? dec(B[k].team.leadtime) : '—'],
+    ['Lead time do Partner (dias)', k => B[k].team.leadtime_partner ? dec(B[k].team.leadtime_partner) : '—']
   ];
   $('medias-body').innerHTML = rows.map(r => `<tr${r[2] ? ' class="hl-row"' : ''}><td>${r[0]}</td>${ks.map(k => `<td class="num">${r[1](k)}</td>`).join('')}</tr>`).join('');
 }
