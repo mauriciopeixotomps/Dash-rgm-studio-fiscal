@@ -517,7 +517,7 @@
     <div class="stat-row" id="res-stats"></div>
 
     <div class="table-wrap" style="margin-top:22px"><table class="closer-table vs-table">
-      <thead><tr><th>Resultado por mês</th><th class="num" data-col="jul">Julho</th><th class="num" data-col="ago">Agosto</th><th class="num" data-col="set">Setembro</th><th class="num" data-col="3m">Últimos 3 meses</th></tr></thead>
+      <thead><tr><th>Resultado por mês — equipe Maurício</th><th class="num" data-col="jul">Julho</th><th class="num" data-col="ago">Agosto</th><th class="num" data-col="set">Setembro</th><th class="num" data-col="3m">Últimos 3 meses</th></tr></thead>
       <tbody id="vs-body"></tbody>
     </table></div>
 
@@ -834,22 +834,16 @@ function bandeira(k) {
 }
 
 function renderVs() {
-  const cols = ['7', '8', '9', '3m'], X = {}; cols.forEach(k => { X[k] = bandeira(k); });
-  const sub = '<span style="color:var(--text-muted)">&nbsp;&nbsp;↳ ';
+  const B = DATA.byMonth, cols = ['7', '8', '9', '3m'];
   const rows = [
-    ['Contratos de franquia — total bandeira Fiscal', k => X[k].n, 1],
-    [sub + 'equipe Maurício</span>', k => X[k].t.contratos],
-    [sub + 'equipe Gabriel (Agro)</span>', k => X[k].g.contratos],
-    ['Contratos Partner (parceria) — total bandeira Fiscal', k => X[k].partner, 1],
-    [sub + 'equipe Maurício</span>', k => X[k].t.partner],
-    [sub + 'equipe Gabriel (Agro)</span>', k => X[k].g.partner],
-    ['Valor de venda — total bandeira Fiscal', k => brl(X[k].valor), 1],
-    [sub + 'equipe Maurício</span>', k => brl(X[k].t.valor)],
-    [sub + 'equipe Gabriel (Agro)</span>', k => X[k].g.valor ? brl(X[k].g.valor) : '—'],
-    ['Caixa (entrada) — total', k => brl(X[k].caixa)],
-    ['% caixa / venda — total', k => pc(X[k].pct)],
-    ['Ticket médio — total', k => brl(X[k].tkm)],
-    ['Lead time médio da franquia — total (dias)', k => X[k].lead ? dec(X[k].lead) : '—']
+    ['Contratos de franquia', k => B[k].team.contratos, 1],
+    ['Contratos Partner (parceria)', k => B[k].team.partner, 1],
+    ['Valor de venda', k => brl(B[k].team.valor)],
+    ['Caixa (entrada)', k => brl(B[k].team.caixa)],
+    ['% caixa / venda', k => pc(B[k].team.pct)],
+    ['Ticket médio', k => brl(B[k].team.tkm)],
+    ['Lead time médio da franquia (dias)', k => B[k].team.leadtime ? dec(B[k].team.leadtime) : '—'],
+    ['Lead time médio do Partner (dias)', k => B[k].team.leadtime_partner ? dec(B[k].team.leadtime_partner) : '—']
   ];
   const selCol = VIEW === 'ago' ? '8' : VIEW === 'set' ? '9' : null;
   $('vs-body').innerHTML = rows.map(r => `<tr${r[2] ? ' class="hl-row"' : ''}><td>${r[0]}</td>${cols.map(k => `<td class="num ${k === selCol ? 'sel' : ''}">${r[1](k)}</td>`).join('')}</tr>`).join('');
