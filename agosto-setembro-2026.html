@@ -530,6 +530,7 @@
       <div class="chart-card" style="margin-top:0">
         <h3>Funil da equipe — todas as origens<span class="pbadge pb"></span></h3>
         <div class="funnel" id="funnel"></div>
+        <p class="chart-sub" id="funnel-note" style="margin:10px 0 0"></p>
       </div>
     </div>
 
@@ -537,6 +538,14 @@
       <thead><tr><th>Closer</th><th class="num">CC1</th><th class="num">FPQ</th><th class="num">CC2</th><th class="num">CC3</th><th class="num">No-show</th><th class="num">Franquias</th><th class="num">Partner</th><th class="num">CC1→FPQ</th><th class="num">FPQ→CC2</th><th class="num">CC2→CC3</th></tr></thead>
       <tbody id="closer-body"></tbody>
     </table></div>
+
+    <h3 style="margin:28px 0 8px;font-size:15px;">Reuniões (CC1) por closer por mês</h3>
+    <div class="table-wrap"><table class="closer-table">
+      <thead><tr><th rowspan="2">Closer</th><th class="num" colspan="3" style="text-align:center">Todas as origens</th><th class="num" colspan="3" style="text-align:center">Só inbound</th></tr>
+      <tr><th class="num">Agosto</th><th class="num">Setembro</th><th class="num">Média / mês</th><th class="num">Agosto</th><th class="num">Setembro</th><th class="num">Média / mês</th></tr></thead>
+      <tbody id="cc1mes-body"></tbody>
+    </table></div>
+    <p class="chart-sub" style="margin:8px 0 0" id="cc1mes-note"></p>
 
     <div id="sdr-block"></div>
 
@@ -566,6 +575,7 @@
       <h3>Funil e closers por origem</h3>
       <div class="viewbar-inner" style="padding:0;height:auto;margin:6px 0 14px;flex-wrap:wrap" id="orig-chips"></div>
       <div class="funnel" id="funnel-orig"></div>
+      <p class="chart-sub" id="funnel-orig-note" style="margin:10px 0 0"></p>
     </div>
     <div class="table-wrap"><table class="closer-table">
       <thead><tr><th>Closer <span class="pbadge" id="orig-closer-badge"></span></th><th class="num">CC1</th><th class="num">FPQ</th><th class="num">CC2</th><th class="num">CC3</th><th class="num">No-show</th><th class="num">Franquias</th><th class="num">Partner</th><th class="num">CC1→FPQ</th><th class="num">FPQ→CC2</th><th class="num">CC2→CC3</th></tr></thead>
@@ -984,11 +994,24 @@ function renderSdr() {
     <div class="caveat" style="margin-top:14px"><span>ℹ️</span><span><b>Como ler.</b> Fonte: Pipedrive, atualizado até 09/10. Entra todo agendamento de CC1 feito por qualquer SDR (manual ou bot) para um negócio dos closers da Fiscal (Leonardo, Adalberto, Fred e Luciana); agendamentos para os closers da Agro ou para o funil Partner ficam fora. Cada agendamento tem um resultado: <b>Realizada</b> = a CC1 aconteceu (mesmo depois de um no-show anterior); <b>No-show</b> = marcou e a CC1 não aconteceu; <b>Sem resultado</b> = ainda sem CC1 nem no-show registrado. Realizadas + No-show + Sem resultado = Agendamentos. O Adalberto agenda as próprias reuniões de outbound. O % de agendamento só existe para o time dedicado (Jonatans, Leonardo Soares e Lorenzo), que tem leads próprios: agendamentos para os closers da Fiscal ÷ leads recebidos no funil Fiscal. <b>Por que não soma com o funil acima:</b> o funil conta o CC1 e o no-show da equipe inteira, de qualquer origem, inclusive reuniões que o próprio closer marcou ou que não têm agendamento registrado por SDR; aqui entram só os agendamentos de SDR para negócios dos closers da Fiscal. No-show = leads únicos nos dois lugares. Agendamentos no relatório do Mkt (inbound): ${mk} (ago) e ${mks} (set).</span></div>`;
 }
 
+function renderCc1Mes() {
+  const A = DATA.views.ago, S = DATA.views.set, NCL = 4, d1 = x => dec(x, 1);
+  const rows = A.closers.map((c, i) => ({ nome: c.nome, a: c.cc1, s: S.closers[i].cc1, ai: A.orig.inbound.closers[i].cc1, si: S.orig.inbound.closers[i].cc1 }));
+  const line = (nome, r, bold, div) => `<tr${bold ? ' style="font-weight:700"' : ''}><td class="name">${nome}</td><td class="num">${d1(r.a / div)}</td><td class="num">${d1(r.s / div)}</td><td class="num">${d1((r.a + r.s) / 2 / div)}</td><td class="num">${d1(r.ai / div)}</td><td class="num">${d1(r.si / div)}</td><td class="num">${d1((r.ai + r.si) / 2 / div)}</td></tr>`;
+  const T = rows.reduce((t, r) => ({ a: t.a + r.a, s: t.s + r.s, ai: t.ai + r.ai, si: t.si + r.si }), { a: 0, s: 0, ai: 0, si: 0 });
+  $('cc1mes-body').innerHTML = rows.map(r => line(r.nome, r, false, 1)).join('') + line('Total da equipe', T, true, 1) + line('Média por closer', T, true, NCL);
+  $('cc1mes-note').textContent = 'CC1 realizadas no mês (Pipedrive). A média por closer divide o total da equipe por ' + NCL + ' closers. A média / mês é a média de agosto e setembro.';
+}
+function funnelNotes(V) {
+  const t3 = DATA.byMonth['3m'].team.contratos, jul = DATA.byMonth['7'].team.contratos;
+  const txt = `${V.label}: ${V.contratos} contratos de franquia. Os ${t3} contratos dos últimos 3 meses incluem julho (${jul}), que não faz parte deste período.`;
+  $('funnel-note').textContent = txt; $('funnel-orig-note').textContent = txt;
+}
 function render(v) {
   VIEW = v; const V = DATA.views[v];
   document.querySelectorAll('.viewbar button').forEach(b => b.classList.toggle('on', b.dataset.v === v));
   document.querySelectorAll('.pb').forEach(e => { e.textContent = V.label; });
-  renderResumo(V); renderVs(); renderFunil(V); renderOrigem(V); renderGanhos(V); renderSdr();
+  renderResumo(V); renderVs(); renderFunil(V); renderOrigem(V); renderGanhos(V); funnelNotes(V); renderSdr();
 }
 document.querySelectorAll('.viewbar button').forEach(b => b.addEventListener('click', () => render(b.dataset.v)));
 
@@ -1008,7 +1031,7 @@ document.querySelectorAll('.viewbar button').forEach(b => b.addEventListener('cl
   $('oct-body').innerHTML = rows.join('');
 })();
 
-renderMediasCard(); renderMediasStatic(); renderKpiTable();
+renderMediasCard(); renderMediasStatic(); renderKpiTable(); renderCc1Mes();
 render('all');
 
 </script>
